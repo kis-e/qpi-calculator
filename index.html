@@ -3,8 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QPI Calculator</title>
+    
+    <title>QPI Calculator — Academic Tracker</title>
+    <meta name="title" content="QPI Calculator — Academic Tracker">
+    <meta name="description" content="A sleek, minimal tool to calculate your QPI using portal-accurate logic.">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://kis-e.github.io/qpi-calculator/">
+    <meta property="og:title" content="QPI Calculator — Academic Tracker">
+    <meta property="og:description" content="Calculate your QPI with a clean interface. Supports WP exclusion and No Grade logic.">
+    <meta property="og:image" content="https://kis-e.github.io/qpi-calculator/preview.png">
+
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://kis-e.github.io/qpi-calculator/">
+    <meta property="twitter:title" content="QPI Calculator — Academic Tracker">
+    <meta property="twitter:description" content="A sleek, minimal tool to calculate your QPI using portal-accurate logic.">
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --bg: #f8f9fa;
@@ -210,6 +226,7 @@
         div.className = 'course-row';
         div.innerHTML = rowHTML;
         document.getElementById('course-list').appendChild(div);
+        calculateQPI();
     }
 
     function removeRow(btn) {
