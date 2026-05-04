@@ -3,34 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <title>QPI Calculator — Academic Tracker</title>
-    <meta name="title" content="QPI Calculator — Academic Tracker">
-    <meta name="description" content="A sleek, minimal tool to calculate your QPI using portal-accurate logic.">
-
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://kis-e.github.io/qpi-calculator/">
-    <meta property="og:title" content="QPI Calculator — Academic Tracker">
-    <meta property="og:description" content="Calculate your QPI with a clean interface. Supports WP exclusion and No Grade logic.">
-    <meta property="og:image" content="https://kis-e.github.io/qpi-calculator/preview.png">
-
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://kis-e.github.io/qpi-calculator/">
-    <meta property="twitter:title" content="QPI Calculator — Academic Tracker">
-    <meta property="twitter:description" content="A sleek, minimal tool to calculate your QPI using portal-accurate logic.">
-
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg: #f8f9fa;
-            --card: #ffffff;
+            --bg: #fdfdfd;
+            --card-bg: #ffffff;
+            --input-fill: #f1f3f5;
             --primary: #2d3436;
             --accent: #0984e3;
-            --border: #e9ecef;
-            --text-muted: #636e72;
+            --text-dim: #94a3b8;
+            --error: #e17055;
+            --radius: 12px;
         }
 
+        /* Centering Logic */
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg);
@@ -38,225 +26,264 @@
             margin: 0;
             display: flex;
             justify-content: center;
-            padding: 40px 20px;
+            align-items: center; /* Vertical Center */
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
         .calculator-card {
-            background: var(--card);
+            background: var(--card-bg);
             width: 100%;
-            max-width: 500px;
+            max-width: 600px;
             padding: 40px;
-            border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.04);
+            border-radius: 28px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.03); 
+            margin: auto; /* Fallback centering */
         }
 
-        h1 {
-            font-weight: 800;
-            font-size: 1.8rem;
-            margin: 0 0 10px 0;
-            letter-spacing: -0.5px;
+        h1 { font-weight: 800; font-size: 1.8rem; margin: 0; text-align: center; letter-spacing: -1px; }
+        .subtitle { text-align: center; color: var(--text-dim); font-size: 0.85rem; margin-bottom: 30px; font-weight: 500; }
+
+        .target-box { 
+            background: var(--input-fill); 
+            padding: 24px; 
+            border-radius: 20px; 
+            margin-bottom: 35px; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center;
+            gap: 12px; 
             text-align: center;
         }
 
-        .subtitle {
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-bottom: 40px;
+        .target-input-group { display: flex; flex-direction: column; gap: 8px; align-items: center; }
+        .target-input-group label { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--text-dim); letter-spacing: 0.5px; }
+        
+        .target-input { 
+            width: 110px; 
+            font-weight: 800; 
+            color: var(--accent); 
+            background: #fff; 
+            border: none;
+            padding: 14px; 
+            border-radius: var(--radius); 
+            text-align: center; 
+            font-size: 1.3rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
         }
 
-        .row-header {
-            display: flex;
-            font-size: 0.7rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 10px;
-            padding: 0 10px;
-        }
+        .row-header { display: flex; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: var(--text-dim); margin-bottom: 12px; padding: 0 10px; letter-spacing: 0.5px; }
+        .course-row { display: flex; gap: 10px; margin-bottom: 12px; align-items: center; animation: slideIn 0.3s ease-out; }
+        
+        @keyframes slideIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .course-row {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 12px;
-            align-items: center;
+        input, select { 
+            background: var(--input-fill); 
+            border: none; 
+            padding: 12px; 
+            border-radius: var(--radius); 
+            font-size: 0.95rem; 
+            width: 100%; 
+            color: var(--primary); 
+            transition: all 0.2s ease; 
+            appearance: none; 
+            -webkit-appearance: none;
         }
-
-        input, select {
-            background: #f1f3f5;
-            border: 1px solid transparent;
-            padding: 12px;
-            border-radius: 12px;
-            font-size: 0.95rem;
-            transition: all 0.2s;
-        }
-
-        input:focus, select:focus {
-            background: #fff;
-            border-color: var(--accent);
-            outline: none;
+        
+        input:focus, select:focus { 
+            background: #fff; 
+            outline: none; 
             box-shadow: 0 0 0 4px rgba(9, 132, 227, 0.1);
         }
-
-        .input-name { flex: 2; min-width: 0; }
-        .input-units { width: 60px; text-align: center; }
-        .input-grade { flex: 1.5; }
-
-        .remove-btn {
-            background: none;
-            border: none;
-            color: #fab1a0;
+        
+        .input-name { flex: 2; }
+        .input-units { width: 65px; text-align: center; }
+        
+        .input-grade { 
+            flex: 1.2; 
             cursor: pointer;
-            font-size: 1.2rem;
-            padding: 5px;
-            transition: 0.2s;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 30px;
         }
-
-        .remove-btn:hover { color: #e17055; }
-
-        .add-btn {
-            width: 100%;
-            background: none;
-            border: 2px dashed var(--border);
-            color: var(--text-muted);
-            padding: 14px;
-            border-radius: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 15px;
-            transition: 0.2s;
-        }
-
-        .add-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-
-        .result-container {
-            margin-top: 40px;
-            text-align: center;
-            border-top: 1px solid var(--border);
-            padding-top: 30px;
-        }
-
-        .qpi-label {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--text-muted);
+        
+        .grade-goal { 
+            width: 85px; 
+            font-size: 0.65rem; 
+            font-weight: 800; 
+            text-align: center; 
+            color: var(--accent); 
+            padding: 8px 4px; 
+            border-radius: 8px; 
+            background: rgba(9, 132, 227, 0.08); 
+            min-height: 14px; 
             text-transform: uppercase;
+            transition: all 0.3s ease;
+            opacity: 0;
         }
+        .grade-goal.visible { opacity: 1; }
+        .goal-impossible { color: var(--error); background: rgba(225, 112, 85, 0.08); }
 
-        .qpi-value {
-            font-size: 4rem;
-            font-weight: 800;
-            display: block;
-            margin: 10px 0;
-            color: var(--primary);
-        }
-
-        .stats-detail {
+        .remove-btn { background: none; border: none; color: #fab1a0; cursor: pointer; font-size: 1.2rem; padding: 5px; transition: 0.2s; opacity: 0.4; }
+        .remove-btn:hover { color: var(--error); opacity: 1; }
+        
+        .add-btn { 
+            width: 100%; 
+            background: none; 
+            border: 2px dashed #e2e8f0; 
+            color: var(--text-dim); 
+            padding: 14px; 
+            border-radius: 16px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            margin-top: 15px; 
+            transition: 0.2s; 
             font-size: 0.85rem;
-            color: var(--text-muted);
         }
+        .add-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(9, 132, 227, 0.02); }
+
+        .result-container { margin-top: 40px; text-align: center; border-top: 2px solid #f8f9fa; padding-top: 30px; }
+        .qpi-value { font-size: 4.5rem; font-weight: 800; display: block; margin: 5px 0; letter-spacing: -3px; color: var(--primary); }
+        #stats { font-size: 0.85rem; color: var(--text-dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
     </style>
 </head>
 <body>
 
 <div class="calculator-card">
     <h1>QPI Calculator</h1>
-    <p class="subtitle">Academic Performance Tracker</p>
+    <p class="subtitle">Academic Tracker</p>
+
+    <div class="target-box">
+        <div class="target-input-group">
+            <label>Desired QPI Goal</label>
+            <input type="number" id="target-qpi" class="target-input" placeholder="3.0" step="0.1" oninput="calculate()">
+        </div>
+        <div id="target-summary" style="font-size: 0.8rem; font-weight: 700; min-height: 1.2em;"></div>
+    </div>
 
     <div class="row-header">
         <span style="flex: 2;">Course Name</span>
-        <span style="width: 60px; margin-left: 10px;">Units</span>
-        <span style="flex: 1.5; margin-left: 10px;">Grade</span>
+        <span style="width: 65px; margin-left: 10px;">Units</span>
+        <span style="flex: 1.2; margin-left: 10px;">Grade</span>
+        <span style="width: 85px; margin-left: 10px; text-align: center;">Required</span>
         <span style="width: 25px;"></span>
     </div>
     
-    <div id="course-list" oninput="calculateQPI()">
-        <div class="course-row">
-            <input type="text" class="input-name" placeholder="e.g. MATH11">
-            <input type="number" class="input-units" placeholder="0">
-            <select class="input-grade">
-                <option value="0.0">No Grade</option>
-                <option value="4.0">A</option>
-                <option value="3.5">B+</option>
-                <option value="3.0">B</option>
-                <option value="2.5">C+</option>
-                <option value="2.0">C</option>
-                <option value="1.0">D</option>
-                <option value="0.0">F</option>
-                <option value="0.0">FD</option>
-                <option value="WP">WP</option>
-            </select>
-            <button class="remove-btn" onclick="removeRow(this)">×</button>
-        </div>
-    </div>
-
-    <button class="add-btn" onclick="addCourse()">+ Add Course</button>
+    <div id="course-list" oninput="calculate()"></div>
+    <button class="add-btn" onclick="addCourse()">+ ADD NEW COURSE</button>
 
     <div class="result-container">
-        <span class="qpi-label">Current QPI</span>
-        <span id="qpi-display" class="qpi-value">0.00</span>
-        <div id="stats" class="stats-detail">0 units total</div>
+        <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.5px;">Current Standing</span>
+        <span id="qpi-display" class="qpi-value">—</span>
+        <div id="stats">0 UNITS TOTAL</div>
     </div>
 </div>
 
 <script>
     const rowHTML = `
-        <input type="text" class="input-name" placeholder="Course">
-        <input type="number" class="input-units" placeholder="0">
+        <input type="text" class="input-name" placeholder="e.g. MATH11">
+        <input type="number" class="input-units" placeholder="0" min="0">
         <select class="input-grade">
-            <option value="0.0">No Grade</option>
+            <option value="PENDING">—</option>
             <option value="4.0">A</option>
             <option value="3.5">B+</option>
             <option value="3.0">B</option>
             <option value="2.5">C+</option>
             <option value="2.0">C</option>
             <option value="1.0">D</option>
-            <option value="0.0">F</option>
-            <option value="0.0">FD</option>
+            <option value="0.0">F / FD</option>
             <option value="WP">WP</option>
         </select>
+        <div class="grade-goal"></div>
         <button class="remove-btn" onclick="removeRow(this)">×</button>
     `;
+
+    function getLetterGoal(val) {
+        if (val > 3.5) return "Need A";
+        if (val > 3.0) return "Need B+";
+        if (val > 2.5) return "Need B";
+        if (val > 2.0) return "Need C+";
+        if (val > 1.0) return "Need C";
+        if (val > 0.0) return "Need D";
+        return "Pass Only";
+    }
 
     function addCourse() {
         const div = document.createElement('div');
         div.className = 'course-row';
         div.innerHTML = rowHTML;
         document.getElementById('course-list').appendChild(div);
-        calculateQPI();
+        calculate();
     }
 
-    function removeRow(btn) {
-        btn.parentElement.remove();
-        calculateQPI();
+    function removeRow(btn) { 
+        btn.parentElement.remove(); 
+        calculate(); 
     }
 
-    function calculateQPI() {
-        let totalPoints = 0;
-        let totalUnits = 0;
+    function calculate() {
+        let totalPoints = 0, totalUnits = 0, pendingUnits = 0;
+        const rows = document.querySelectorAll('.course-row');
+        
+        rows.forEach(row => {
+            const uVal = parseFloat(row.querySelector('.input-units').value) || 0;
+            const gVal = row.querySelector('.input-grade').value;
+            const goalEl = row.querySelector('.grade-goal');
+            
+            goalEl.classList.remove('visible', 'goal-impossible');
 
-        const units = document.querySelectorAll('.input-units');
-        const grades = document.querySelectorAll('.input-grade');
-
-        for (let i = 0; i < units.length; i++) {
-            let uVal = parseFloat(units[i].value);
-            let gVal = grades[i].value;
-
-            if (!isNaN(uVal) && uVal > 0) {
-                if (gVal === "WP") continue;
-                totalPoints += (uVal * parseFloat(gVal));
+            if (uVal > 0 && gVal !== "WP") {
                 totalUnits += uVal;
+                if (gVal === "PENDING") {
+                    pendingUnits += uVal;
+                } else {
+                    totalPoints += (uVal * parseFloat(gVal));
+                }
             }
-        }
+        });
 
-        const qpi = totalUnits > 0 ? (totalPoints / totalUnits).toFixed(2) : "0.00";
+        const qpi = totalUnits > 0 ? (totalPoints / totalUnits).toFixed(2) : "—";
         document.getElementById('qpi-display').innerText = qpi;
-        document.getElementById('stats').innerText = `${totalUnits} units total`;
-    }
-</script>
+        document.getElementById('stats').innerText = `${totalUnits} UNITS TOTAL LOAD`;
 
+        const targetQpi = parseFloat(document.getElementById('target-qpi').value);
+        const summaryEl = document.getElementById('target-summary');
+
+        if (!isNaN(targetQpi) && pendingUnits > 0) {
+            const neededAvg = ((targetQpi * totalUnits) - totalPoints) / pendingUnits;
+            
+            rows.forEach(row => {
+                const gVal = row.querySelector('.input-grade').value;
+                const uVal = parseFloat(row.querySelector('.input-units').value) || 0;
+                
+                if (gVal === "PENDING" && uVal > 0) {
+                    const goalEl = row.querySelector('.grade-goal');
+                    goalEl.classList.add('visible');
+                    if (neededAvg > 4.0) {
+                        goalEl.innerText = "NO WAY";
+                        goalEl.classList.add('goal-impossible');
+                    } else {
+                        goalEl.innerText = getLetterGoal(neededAvg);
+                    }
+                }
+            });
+
+            if (neededAvg > 4.0) {
+                summaryEl.innerText = "Goal is mathematically impossible";
+                summaryEl.style.color = "var(--error)";
+            } else {
+                summaryEl.innerText = `TO HIT ${targetQpi.toFixed(2)}, YOU NEED:`;
+                summaryEl.style.color = "var(--text-dim)";
+            }
+        } else {
+            summaryEl.innerText = "";
+        }
+    }
+
+    for(let i=0; i<3; i++) addCourse();
+</script>
 </body>
 </html>
