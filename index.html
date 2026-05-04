@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QPI Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f8f9fa;
+            --card: #ffffff;
+            --primary: #2d3436;
+            --accent: #0984e3;
+            --border: #e9ecef;
+            --text-muted: #636e72;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--primary);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .calculator-card {
+            background: var(--card);
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.04);
+        }
+
+        h1 {
+            font-weight: 800;
+            font-size: 1.8rem;
+            margin: 0 0 10px 0;
+            letter-spacing: -0.5px;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 40px;
+        }
+
+        .row-header {
+            display: flex;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            padding: 0 10px;
+        }
+
+        .course-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+
+        input, select {
+            background: #f1f3f5;
+            border: 1px solid transparent;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        input:focus, select:focus {
+            background: #fff;
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(9, 132, 227, 0.1);
+        }
+
+        .input-name { flex: 2; min-width: 0; }
+        .input-units { width: 60px; text-align: center; }
+        .input-grade { flex: 1.5; }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: #fab1a0;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 5px;
+            transition: 0.2s;
+        }
+
+        .remove-btn:hover { color: #e17055; }
+
+        .add-btn {
+            width: 100%;
+            background: none;
+            border: 2px dashed var(--border);
+            color: var(--text-muted);
+            padding: 14px;
+            border-radius: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.2s;
+        }
+
+        .add-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .result-container {
+            margin-top: 40px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            padding-top: 30px;
+        }
+
+        .qpi-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .qpi-value {
+            font-size: 4rem;
+            font-weight: 800;
+            display: block;
+            margin: 10px 0;
+            color: var(--primary);
+        }
+
+        .stats-detail {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+<div class="calculator-card">
+    <h1>QPI Calculator</h1>
+    <p class="subtitle">Academic Performance Tracker</p>
+
+    <div class="row-header">
+        <span style="flex: 2;">Course Name</span>
+        <span style="width: 60px; margin-left: 10px;">Units</span>
+        <span style="flex: 1.5; margin-left: 10px;">Grade</span>
+        <span style="width: 25px;"></span>
+    </div>
+    
+    <div id="course-list" oninput="calculateQPI()">
+        <div class="course-row">
+            <input type="text" class="input-name" placeholder="e.g. MATH11">
+            <input type="number" class="input-units" placeholder="0">
+            <select class="input-grade">
+                <option value="0.0">No Grade</option>
+                <option value="4.0">A</option>
+                <option value="3.5">B+</option>
+                <option value="3.0">B</option>
+                <option value="2.5">C+</option>
+                <option value="2.0">C</option>
+                <option value="1.0">D</option>
+                <option value="0.0">F</option>
+                <option value="0.0">FD</option>
+                <option value="WP">WP</option>
+            </select>
+            <button class="remove-btn" onclick="removeRow(this)">×</button>
+        </div>
+    </div>
+
+    <button class="add-btn" onclick="addCourse()">+ Add Course</button>
+
+    <div class="result-container">
+        <span class="qpi-label">Current QPI</span>
+        <span id="qpi-display" class="qpi-value">0.00</span>
+        <div id="stats" class="stats-detail">0 units total</div>
+    </div>
+</div>
+
+<script>
+    const rowHTML = `
+        <input type="text" class="input-name" placeholder="Course">
+        <input type="number" class="input-units" placeholder="0">
+        <select class="input-grade">
+            <option value="0.0">No Grade</option>
+            <option value="4.0">A</option>
+            <option value="3.5">B+</option>
+            <option value="3.0">B</option>
+            <option value="2.5">C+</option>
+            <option value="2.0">C</option>
+            <option value="1.0">D</option>
+            <option value="0.0">F</option>
+            <option value="0.0">FD</option>
+            <option value="WP">WP</option>
+        </select>
+        <button class="remove-btn" onclick="removeRow(this)">×</button>
+    `;
+
+    function addCourse() {
+        const div = document.createElement('div');
+        div.className = 'course-row';
+        div.innerHTML = rowHTML;
+        document.getElementById('course-list').appendChild(div);
+    }
+
+    function removeRow(btn) {
+        btn.parentElement.remove();
+        calculateQPI();
+    }
+
+    function calculateQPI() {
+        let totalPoints = 0;
+        let totalUnits = 0;
+
+        const units = document.querySelectorAll('.input-units');
+        const grades = document.querySelectorAll('.input-grade');
+
+        for (let i = 0; i < units.length; i++) {
+            let uVal = parseFloat(units[i].value);
+            let gVal = grades[i].value;
+
+            if (!isNaN(uVal) && uVal > 0) {
+                if (gVal === "WP") continue;
+                totalPoints += (uVal * parseFloat(gVal));
+                totalUnits += uVal;
+            }
+        }
+
+        const qpi = totalUnits > 0 ? (totalPoints / totalUnits).toFixed(2) : "0.00";
+        document.getElementById('qpi-display').innerText = qpi;
+        document.getElementById('stats').innerText = `${totalUnits} units total`;
+    }
+</script>
+
+</body>
+</html>
